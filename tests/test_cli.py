@@ -73,3 +73,21 @@ def test_cli_train(tmp_path):
     ])
     assert result.exit_code == 0
     assert "Training Completed Successfully" in result.stdout
+
+
+def test_cli_wizard(tmp_path):
+    export_dir = tmp_path / "wizard_export"
+    result = runner.invoke(app, [
+        "wizard",
+        "--non-interactive",
+        "--model", "llama3-8b",
+        "--preset", "rtx-4090",
+        "--precision", "fp16",
+        "--export-dir", str(export_dir),
+    ])
+    assert result.exit_code == 0
+    assert "DraftCraft Speculative Decoding Deployment Wizard" in result.stdout
+    assert "Meta-Llama-3-8B-Instruct" in result.stdout
+    assert "FEASIBLE" in result.stdout
+    assert (export_dir / "vllm_speculative_config.json").exists()
+

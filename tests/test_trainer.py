@@ -44,6 +44,8 @@ def test_checkpoint_save_and_load(tmp_path):
         metrics={"eval_loss": 0.42},
     )
     assert ckpt_path.exists()
+    safetensors_path = tmp_path / "test_head.safetensors"
+    assert safetensors_path.exists()
 
     model2 = EagleDraftHead(config)
     info = CheckpointManager.load_checkpoint(model2, ckpt_path)
@@ -51,9 +53,24 @@ def test_checkpoint_save_and_load(tmp_path):
     assert info["step"] == 10
     assert info["metrics"]["eval_loss"] == 0.42
 
-    # Verify weights match exactly
+    # Verify weights match exactly from pt
     for p1, p2 in zip(model1.parameters(), model2.parameters()):
         assert torch.allclose(p1, p2)
+
+    # Verify loading from safetensors file
+    model3 = EagleDraftHead(config)
+    CheckpointManager.load_checkpoint(model3, safetensors_path)
+    for p1, p3 in zip(model1.parameters(), model3.parameters()):
+        assert torch.allclose(p1, p3)
+
+    # Test standalone export_safetensors
+    standalone_path = tmp_path / "standalone.safetensors"
+    exported = CheckpointManager.export_safetensors(model1, standalone_path)
+    assert exported.exists()
+    model4 = EagleDraftHead(config)
+    CheckpointManager.load_checkpoint(model4, standalone_path)
+    for p1, p4 in zip(model1.parameters(), model4.parameters()):
+        assert torch.allclose(p1, p4)
 
 
 def test_eagle_trainer_execution(tmp_path):

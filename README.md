@@ -106,6 +106,18 @@ pip install -e .
 
 DraftCraft provides a CLI powered by Typer and Rich.
 
+### Interactive Deployment Wizard
+
+```bash
+# Launch interactive step-by-step setup wizard
+draftcraft wizard
+
+# Run non-interactively with preselected parameters and export configuration
+draftcraft wizard --model llama3-8b --preset rtx-4090 --precision fp16 --export-dir ./configs
+```
+
+Guides you through model architecture selection, hardware GPU presets, VRAM budget verification, finding optimal lookahead $K^*$, and generating copy-pasteable production vLLM serving commands.
+
 ### System Diagnostics
 
 ```bash

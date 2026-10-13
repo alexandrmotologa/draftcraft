@@ -23,11 +23,13 @@ class CheckpointManager:
         epoch: int = 0,
         step: int = 0,
         metrics: Optional[Dict[str, float]] = None,
+        save_safetensors: bool = True,
     ) -> Path:
         """Save model weights and metadata to directory.
 
         Creates:
         - <checkpoint_name>.pt (PyTorch state_dict)
+        - <checkpoint_name>.safetensors (Zero-copy SafeTensors weights, if available)
         - <checkpoint_name>_metadata.json (training info and architecture config)
         """
         out_path = Path(output_dir)
@@ -47,6 +49,17 @@ class CheckpointManager:
 
         torch.save(checkpoint_payload, weights_file)
 
+        safetensors_file: Optional[Path] = None
+        if save_safetensors:
+            try:
+                import safetensors.torch
+                safetensors_file = out_path / f"{checkpoint_name}.safetensors"
+                # Ensure contiguous tensors
+                clean_state = {k: v.contiguous() for k, v in model.state_dict().items()}
+                safetensors.torch.save_file(clean_state, str(safetensors_file))
+            except ImportError:
+                safetensors_file = None
+
         # Save metadata JSON
         metadata: Dict[str, Any] = {
             "checkpoint_name": checkpoint_name,
@@ -55,11 +68,26 @@ class CheckpointManager:
             "metrics": metrics or {},
             "weights_filename": weights_file.name,
         }
+        if safetensors_file is not None and safetensors_file.exists():
+            metadata["safetensors_filename"] = safetensors_file.name
         if config is not None:
             metadata["config"] = config.model_dump()
 
         meta_file.write_text(json.dumps(metadata, indent=2), encoding="utf-8")
         return weights_file
+
+    @staticmethod
+    def export_safetensors(model: nn.Module, output_path: Union[str, Path]) -> Path:
+        """Export raw draft head weights into a standalone .safetensors file."""
+        out = Path(output_path)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            import safetensors.torch
+            clean_state = {k: v.contiguous() for k, v in model.state_dict().items()}
+            safetensors.torch.save_file(clean_state, str(out))
+            return out
+        except ImportError as e:
+            raise CheckpointError(f"Cannot export to safetensors: package not installed ({e})") from e
 
     @staticmethod
     def load_checkpoint(
@@ -68,12 +96,18 @@ class CheckpointManager:
         optimizer: Optional[torch.optim.Optimizer] = None,
         device: Union[str, torch.device] = "cpu",
     ) -> Dict[str, Any]:
-        """Load state dict into model and optional optimizer."""
+        """Load state dict into model and optional optimizer from .pt or .safetensors."""
         p = Path(checkpoint_path)
         if not p.exists():
             raise CheckpointError(f"Checkpoint file not found: {p}")
 
         try:
+            if p.suffix.lower() == ".safetensors":
+                import safetensors.torch
+                state_dict = safetensors.torch.load_file(str(p), device=str(device))
+                model.load_state_dict(state_dict)
+                return {"epoch": 0, "step": 0, "metrics": {}}
+
             payload = torch.load(p, map_location=device, weights_only=False)
             model.load_state_dict(payload["model_state_dict"])
 

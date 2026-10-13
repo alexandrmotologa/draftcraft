@@ -1,5 +1,4 @@
-"""CLI command implementations for DraftCraft using Typer and Rich."""
-
+import json
 import sys
 from pathlib import Path
 from typing import Optional
@@ -469,3 +468,186 @@ def serve_cmd(
         border_style="cyan",
     ))
     uvicorn.run("draftcraft.web.app:app", host=host, port=port, reload=reload)
+
+
+WIZARD_MODEL_PROFILES = {
+    "llama3-8b": {
+        "title": "Meta-Llama-3-8B-Instruct",
+        "params_b": 8.0,
+        "layers": 32,
+        "hidden_dim": 4096,
+        "num_heads": 32,
+        "num_kv_heads": 8,
+        "vocab_size": 128256,
+        "acceptance": 0.74,
+    },
+    "mistral-7b": {
+        "title": "Mistral-7B-Instruct-v0.3",
+        "params_b": 7.24,
+        "layers": 32,
+        "hidden_dim": 4096,
+        "num_heads": 32,
+        "num_kv_heads": 8,
+        "vocab_size": 32768,
+        "acceptance": 0.72,
+    },
+    "qwen2.5-7b": {
+        "title": "Qwen2.5-7B-Instruct",
+        "params_b": 7.61,
+        "layers": 28,
+        "hidden_dim": 3584,
+        "num_heads": 28,
+        "num_kv_heads": 4,
+        "vocab_size": 152064,
+        "acceptance": 0.73,
+    },
+    "llama3-70b": {
+        "title": "Meta-Llama-3-70B-Instruct",
+        "params_b": 70.0,
+        "layers": 80,
+        "hidden_dim": 8192,
+        "num_heads": 64,
+        "num_kv_heads": 8,
+        "vocab_size": 128256,
+        "acceptance": 0.68,
+    },
+}
+
+
+def wizard_cmd(
+    model_choice: Optional[str] = typer.Option(None, "--model", "-m", help="Target model key (llama3-8b, mistral-7b, qwen2.5-7b, llama3-70b)"),
+    preset: Optional[str] = typer.Option(None, "--preset", "-p", help="Hardware preset (rtx-4090, rtx-4080, rtx-4070-ti, rtx-4060-8gb, rtx-3060-12gb, apple-m3-max)"),
+    precision: str = typer.Option("fp16", "--precision", help="Target precision (fp16, int8, int4, q4_k_m)"),
+    batch_size: int = typer.Option(1, "--batch-size", "-b", help="Serving concurrency / batch size"),
+    context_length: int = typer.Option(4096, "--context-len", help="Context length tokens"),
+    export_dir: Optional[Path] = typer.Option(None, "--export-dir", "-o", help="Optional directory to save plan and configs"),
+    non_interactive: bool = typer.Option(False, "--non-interactive", help="Bypass interactive prompts and use defaults"),
+) -> None:
+    """Interactive wizard to configure, budget, and export speculative decoding setups."""
+    from rich.prompt import Prompt
+
+    console.print(Panel(
+        "[bold cyan]DraftCraft Speculative Decoding Deployment Wizard[/bold cyan]\n"
+        "[dim]Design and budget an optimal speculative decoding setup in 3 simple steps.[/dim]",
+        border_style="cyan",
+    ))
+
+    # Step 1: Select Model
+    m_keys = list(WIZARD_MODEL_PROFILES.keys())
+    if not model_choice or model_choice.lower() not in WIZARD_MODEL_PROFILES:
+        if non_interactive:
+            model_choice = "llama3-8b"
+        else:
+            console.print("\n[bold yellow]Step 1: Choose your Target LLM Architecture[/bold yellow]")
+            for idx, k in enumerate(m_keys, 1):
+                m_info = WIZARD_MODEL_PROFILES[k]
+                console.print(f"  [{idx}] [bold white]{m_info['title']}[/bold white] ({m_info['params_b']}B params, {m_info['hidden_dim']} hidden dim)")
+            sel = Prompt.ask("Select Model", choices=[str(i) for i in range(1, len(m_keys) + 1)], default="1")
+            model_choice = m_keys[int(sel) - 1]
+
+    model_info = WIZARD_MODEL_PROFILES[model_choice.lower()]
+
+    # Step 2: Select Hardware Preset
+    h_keys = list(HARDWARE_PRESETS.keys())
+    if not preset or preset.lower() not in HARDWARE_PRESETS:
+        if non_interactive:
+            preset = "rtx-4090"
+        else:
+            console.print("\n[bold yellow]Step 2: Choose your GPU Hardware Setup[/bold yellow]")
+            for idx, k in enumerate(h_keys, 1):
+                h_info = HARDWARE_PRESETS[k]
+                console.print(f"  [{idx}] [bold white]{h_info.name}[/bold white] ({h_info.vram_gb} GB VRAM, {h_info.bandwidth_gb_s} GB/s)")
+            h_sel = Prompt.ask("Select Hardware", choices=[str(i) for i in range(1, len(h_keys) + 1)], default="1")
+            preset = h_keys[int(h_sel) - 1]
+
+    # Step 3: Precision validation
+    try:
+        prec = PrecisionType(precision.lower())
+    except ValueError:
+        prec = PrecisionType.FP16
+
+    hw = HARDWARE_PRESETS[preset.lower()]
+
+    # Run VRAM budget calculation
+    budget = VRAMCalculator.calculate_memory(
+        target_param_count_billions=model_info["params_b"],
+        target_precision=prec,
+        target_layers=model_info["layers"],
+        target_hidden_dim=model_info["hidden_dim"],
+        target_heads=model_info["num_heads"],
+        head_hidden_dim=1024,
+        head_layers=2,
+        vocab_size=model_info["vocab_size"],
+        context_len=context_length,
+        batch_size=batch_size,
+        lookahead_k=4,
+        tree_width=1,
+        gpu_capacity_gb=hw.vram_gb,
+    )
+
+    # Acceptance and Speedup calculation
+    acc_rate = model_info["acceptance"]
+    lat_target = hw.typical_target_latency_ms
+    lat_draft = hw.typical_draft_latency_ms
+    opt_k, max_speedup = AcceptanceMath.find_optimal_lookahead(
+        alpha=acc_rate,
+        draft_latency_ms=lat_draft,
+        target_latency_ms=lat_target,
+        max_lookahead=8,
+    )
+
+    # Present Results Table
+    feasibility_color = "green" if budget.fits_in_gpu else "red"
+    feasibility_text = "[OK] FEASIBLE (Fits VRAM)" if budget.fits_in_gpu else "[!] EXCEEDS VRAM (Out of Memory)"
+
+    summary_table = Table(title="Speculative Blueprint & Hardware Budget", border_style="cyan")
+    summary_table.add_column("Parameter", style="bold white")
+    summary_table.add_column("Value", style="cyan")
+
+    summary_table.add_row("Target Model", model_info["title"])
+    summary_table.add_row("Hardware Device", hw.name)
+    summary_table.add_row("Total GPU VRAM", f"{hw.vram_gb:.1f} GB")
+    summary_table.add_row("Target Precision", prec.value.upper())
+    summary_table.add_row("Target Weights", f"{budget.target_weights_gb:.2f} GB")
+    summary_table.add_row("EAGLE Draft Head", f"{budget.draft_head_weights_gb:.2f} GB")
+    summary_table.add_row("KV Cache", f"{budget.total_kv_cache_gb:.2f} GB")
+    summary_table.add_row("Total Required Memory", f"{budget.total_vram_gb:.2f} GB")
+    summary_table.add_row("Available VRAM Headroom", f"{budget.headroom_gb:.2f} GB")
+    summary_table.add_row("Deployment Feasibility", f"[{feasibility_color}]{feasibility_text}[/{feasibility_color}]")
+    summary_table.add_row("Estimated Acceptance Rate", f"{acc_rate * 100:.1f}%")
+    summary_table.add_row("Optimal Speculative K*", f"{opt_k} tokens")
+    summary_table.add_row("Expected Wall-Clock Speedup", f"{max_speedup:.2f}x")
+
+    console.print(summary_table)
+
+    vllm_cmd = (
+        f"python -m vllm.entrypoints.openai.api_server \\\n"
+        f"  --model {model_choice} \\\n"
+        f"  --speculative-model draftcraft/{model_choice}-eagle-head \\\n"
+        f"  --num-speculative-tokens {opt_k} \\\n"
+        f"  --gpu-memory-utilization 0.90 \\\n"
+        f"  --max-model-len {context_length}"
+    )
+
+    console.print(Panel(
+        f"[bold white]Recommended vLLM Serving Command:[/bold white]\n\n"
+        f"[green]{vllm_cmd}[/green]",
+        title="vLLM Production Command",
+        border_style="green",
+    ))
+
+    # Export if requested
+    if export_dir is not None:
+        export_p = Path(export_dir)
+        export_p.mkdir(parents=True, exist_ok=True)
+        vllm_cfg = {
+            "model": model_choice,
+            "speculative_model": f"draftcraft/{model_choice}-eagle-head",
+            "num_speculative_tokens": opt_k,
+            "expected_speedup": round(max_speedup, 2),
+            "max_model_len": context_length,
+            "gpu_memory_utilization": 0.90,
+            "vram_budget_gb": budget.model_dump(),
+        }
+        (export_p / "vllm_speculative_config.json").write_text(json.dumps(vllm_cfg, indent=2), encoding="utf-8")
+        console.print(f"[dim]Exported speculative blueprint to {export_p / 'vllm_speculative_config.json'}[/dim]")

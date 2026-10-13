@@ -11,6 +11,7 @@ from draftcraft.cli.commands import (
     temp_profile_cmd,
     train_cmd,
     vram_cmd,
+    wizard_cmd,
 )
 
 app = typer.Typer(
@@ -20,6 +21,7 @@ app = typer.Typer(
 )
 
 app.command("info")(show_info)
+app.command("wizard")(wizard_cmd)
 app.command("check-tokenizer")(check_tokenizer_cmd)
 app.command("profile")(profile_cmd)
 app.command("matrix")(matrix_cmd)
