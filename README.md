@@ -8,7 +8,8 @@
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B-ee4c2c.svg)](https://pytorch.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100%2B-009688.svg)](https://fastapi.tiangolo.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-61%20passed-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/tests-62%20passed-brightgreen.svg)]()
+[![CI](https://github.com/alexandrmotologa/draftcraft/actions/workflows/ci.yml/badge.svg)](https://github.com/alexandrmotologa/draftcraft/actions)
 
 <br />
 
