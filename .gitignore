@@ -22,11 +22,12 @@ share/python-wheels/
 *.egg
 MANIFEST
 
-# Virtual Environment
+# Virtual Environment & Node
 .venv/
 env/
 venv/
 ENV/
+node_modules/
 
 # Testing & Coverage
 .pytest_cache/

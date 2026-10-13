@@ -1,0 +1,189 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <clipPath id="squircle-clip">
+      <rect x="24" y="24" width="976" height="976" rx="220" />
+    </clipPath>
+
+    <linearGradient id="cyan-glow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00f5ff"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </linearGradient>
+
+    <linearGradient id="gold-beak-l" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a"/>
+      <stop offset="30%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+
+    <linearGradient id="gold-beak-r" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d97706"/>
+      <stop offset="70%" stop-color="#b45309"/>
+      <stop offset="100%" stop-color="#78350f"/>
+    </linearGradient>
+
+    <linearGradient id="facet-l1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#64748b"/>
+      <stop offset="100%" stop-color="#475569"/>
+    </linearGradient>
+
+    <linearGradient id="facet-l2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#475569"/>
+      <stop offset="100%" stop-color="#334155"/>
+    </linearGradient>
+
+    <linearGradient id="facet-r1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+
+    <linearGradient id="facet-r2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#334155"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+
+    <filter id="subtle-shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="18" stdDeviation="22" flood-color="#000000" flood-opacity="0.16" />
+    </filter>
+  </defs>
+
+  <!-- Luxury White Squircle Container -->
+  <rect x="24" y="24" width="976" height="976" rx="220" fill="#ffffff" stroke="#e2e8f0" stroke-width="6" />
+
+  <g clip-path="url(#squircle-clip)">
+    <g transform="translate(512, 512)" filter="url(#subtle-shadow)">
+
+      <!-- Massive Hexagonal Architectural Gateway -->
+      <polygon points="
+        0,-390
+        338,-195
+        338,195
+        0,390
+        -338,195
+        -338,-195
+      " fill="none" stroke="#0f172a" stroke-width="40" stroke-linejoin="round" />
+
+      <!-- Inner Telemetry Dashed Hexagon -->
+      <polygon points="
+        0,-355
+        307,-177
+        307,177
+        0,355
+        -307,177
+        -307,-177
+      " fill="none" stroke="#00f5ff" stroke-width="4" opacity="0.4" stroke-dasharray="16, 12" />
+
+      <!-- Watertight Solid Obsidian Raptor Silhouette -->
+      <path d="
+        M 0,-330
+        L 60,-270 L 120,-300 L 140,-230 L 210,-240 L 200,-150 L 265,-120 L 230,-10 L 270,70 L 195,145 L 215,230 L 130,255 L 135,310 L 0,345
+        L -135,310 L -130,255 L -215,230 L -195,145 L -270,70 L -230,-10 L -265,-120 L -200,-150 L -210,-240 L -140,-230 L -120,-300 L -60,-270 Z
+      " fill="#090d16" />
+
+      <!-- === CROWN FEATHERS (Lookahead Vector Crest) === -->
+      <!-- Center High Crest Spikes -->
+      <polygon points="0,-330 60,-270 0,-240" fill="url(#facet-l1)" />
+      <polygon points="0,-330 -60,-270 0,-240" fill="url(#facet-r1)" />
+      <polygon points="60,-270 120,-300 65,-210" fill="url(#facet-l2)" />
+      <polygon points="-60,-270 -120,-300 -65,-210" fill="#0f172a" />
+      <polygon points="120,-300 140,-230 85,-165" fill="#475569" />
+      <polygon points="-120,-300 -140,-230 -85,-165" fill="#1e293b" />
+      <polygon points="140,-230 210,-240 145,-150" fill="#334155" />
+      <polygon points="-140,-230 -210,-240 -145,-150" fill="#0b0f19" />
+
+      <!-- Forehead Upper Plates -->
+      <polygon points="0,-240 65,-210 0,-140" fill="#94a3b8" />
+      <polygon points="0,-240 -65,-210 0,-140" fill="#334155" />
+      <polygon points="65,-210 85,-165 40,-120" fill="#64748b" />
+      <polygon points="-65,-210 -85,-165 -40,-120" fill="#1e293b" />
+
+      <!-- Auricular Wings (Temples) -->
+      <polygon points="85,-165 145,-150 120,-70 55,-100" fill="#475569" />
+      <polygon points="-85,-165 -145,-150 -120,-70 -55,-100" fill="#0f172a" />
+      <polygon points="145,-150 200,-150 165,-60 120,-70" fill="#334155" />
+      <polygon points="-145,-150 -200,-150 -165,-60 -120,-70" fill="#1e293b" />
+      <polygon points="200,-150 265,-120 215,-10 165,-60" fill="#475569" />
+      <polygon points="-200,-150 -265,-120 -215,-10 -165,-60" fill="#0f172a" />
+
+      <!-- === OVERHANGING RAPTOR SUPRAORBITAL BROW === -->
+      <!-- Sharp triangular brow plates angled down into nasion -->
+      <polygon points="0,-140 40,-120 95,-110 0,-90" fill="#94a3b8" />
+      <polygon points="0,-140 -40,-120 -95,-110 0,-90" fill="#334155" />
+      <polygon points="95,-110 145,-90 105,-50 55,-70" fill="#64748b" />
+      <polygon points="-95,-110 -145,-90 -105,-50 -55,-70" fill="#1e293b" />
+
+      <!-- Deep Obsidian Eye Sockets -->
+      <polygon points="35,-95 95,-80 80,-45 25,-55" fill="#020617" />
+      <polygon points="-35,-95 -95,-80 -80,-45 -25,-55" fill="#020617" />
+
+      <!-- === PIERCING CYAN RAPTOR EYES (Predatory Cant) === -->
+      <!-- Left Eye: Crisp angled diamond aperture with upward flare -->
+      <polygon points="-32,-80 -88,-68 -72,-52 -26,-64" fill="url(#cyan-glow)" />
+      <polygon points="-40,-76 -80,-65 -68,-55 -32,-66" fill="#ffffff" opacity="0.95" />
+      <polygon points="-52,-70 -64,-66 -58,-58 -48,-62" fill="#00f5ff" />
+
+      <!-- Right Eye: Symmetrical crisp angled diamond aperture -->
+      <polygon points="32,-80 88,-68 72,-52 26,-64" fill="url(#cyan-glow)" />
+      <polygon points="40,-76 80,-65 68,-55 32,-66" fill="#ffffff" opacity="0.95" />
+      <polygon points="52,-70 64,-66 58,-58 48,-62" fill="#00f5ff" />
+
+      <!-- Central Nasion & Upper Cere -->
+      <polygon points="0,-90 25,-55 0,-15" fill="#64748b" />
+      <polygon points="0,-90 -25,-55 0,-15" fill="#1e293b" />
+
+      <!-- Cere Flanks -->
+      <polygon points="25,-55 55,-40 38,10 0,-15" fill="#475569" />
+      <polygon points="-25,-55 -55,-40 -38,10 0,-15" fill="#0f172a" />
+
+      <!-- === HOOKED PREDATORY AMBER BEAK === -->
+      <!-- Massive hooked raptor beak descending dramatically -->
+      <polygon points="0,-15 48,15 36,85 0,170" fill="url(#gold-beak-l)" />
+      <polygon points="0,-15 -48,15 -36,85 0,170" fill="url(#gold-beak-r)" />
+
+      <!-- Dynamic Beak Culmen Ridge Reflection -->
+      <polygon points="0,-15 18,50 0,170" fill="#ffffff" opacity="0.4" />
+      <polygon points="0,-15 -14,50 0,170" fill="#78350f" opacity="0.5" />
+
+      <!-- Razor Beak Tip Highlight -->
+      <polygon points="0,140 12,158 0,172 -12,158" fill="#fde047" />
+
+      <!-- Under-Beak Mandible Shadow -->
+      <polygon points="0,170 24,145 0,195" fill="#78350f" />
+      <polygon points="0,170 -24,145 0,195" fill="#451a03" />
+
+      <!-- Cheeks & Malar Low-Poly Facets -->
+      <polygon points="55,-40 105,-30 80,35 38,10" fill="#334155" />
+      <polygon points="-55,-40 -105,-30 -80,35 -38,10" fill="#0f172a" />
+      <polygon points="105,-30 165,-10 130,55 80,35" fill="#475569" />
+      <polygon points="-105,-30 -165,-10 -130,55 -80,35" fill="#1e293b" />
+
+      <!-- Outer Flank Wings -->
+      <polygon points="165,-10 230,-10 185,70 130,55" fill="#334155" />
+      <polygon points="-165,-10 -230,-10 -185,70 -130,55" fill="#0f172a" />
+      <polygon points="230,-10 270,70 215,120 185,70" fill="#475569" />
+      <polygon points="-230,-10 -270,70 -215,120 -185,70" fill="#1e293b" />
+
+      <!-- Gorget / Throat Chevron Plates (Lookahead Acceleration Vector) -->
+      <polygon points="0,195 50,165 35,240 0,265" fill="url(#facet-l2)" />
+      <polygon points="0,195 -50,165 -35,240 0,265" fill="url(#facet-r1)" />
+      <polygon points="50,165 95,135 75,210 35,240" fill="#475569" />
+      <polygon points="-50,165 -95,135 -75,210 -35,240" fill="#0f172a" />
+      <polygon points="95,135 145,115 120,190 75,210" fill="#334155" />
+      <polygon points="-95,135 -145,115 -120,190 -75,210" fill="#1e293b" />
+      <polygon points="145,115 195,145 155,225 120,190" fill="#475569" />
+      <polygon points="-145,115 -195,145 -155,225 -120,190" fill="#0f172a" />
+
+      <!-- Lower Breastplate Keel (Forward Thrust Arrow) -->
+      <polygon points="0,265 50,245 0,340" fill="url(#facet-l1)" />
+      <polygon points="0,265 -50,245 0,340" fill="url(#facet-r1)" />
+      <polygon points="50,245 95,230 65,300 0,340" fill="#334155" />
+      <polygon points="-50,245 -95,230 -65,300 0,340" fill="#0f172a" />
+      <polygon points="95,230 140,255 105,315 65,300" fill="#475569" />
+      <polygon points="-95,230 -140,255 -105,315 -65,300" fill="#1e293b" />
+
+      <!-- Electric Cyan Core Telemetry Jewel at Keel Nexus -->
+      <polygon points="0,265 16,288 0,312 -16,288" fill="url(#cyan-glow)" />
+      <circle cx="0" cy="288" r="3.5" fill="#ffffff" />
+
+    </g>
+  </g>
+</svg>

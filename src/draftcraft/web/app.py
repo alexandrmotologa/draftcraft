@@ -501,8 +501,10 @@ _DASHBOARD_HTML = """<!DOCTYPE html>
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-      document.getElementById(tabId).classList.add('active');
-      event.target.classList.add('active');
+      const targetEl = document.getElementById(tabId);
+      if (targetEl) targetEl.classList.add('active');
+      const btn = document.querySelector(`button[onclick*="${tabId}"]`);
+      if (btn) btn.classList.add('active');
 
       if (tabId === 'tab-vram') runVRAMCalc();
       if (tabId === 'tab-temp') runTempProfile();

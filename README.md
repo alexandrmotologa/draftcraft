@@ -1,21 +1,23 @@
-<div align="center">
+<p align="center">
+  <img src="docs/images/logo.png?raw=true" alt="DraftCraft Logo" width="130" style="border-radius: 24px;" />
+</p>
 
-# DraftCraft
+<h1 align="center">DraftCraft</h1>
 
-**Turnkey Speculative Decoding Matrix Evaluator and EAGLE Draft Head Trainer for Local LLMs**
+<p align="center">
+  <strong>Turnkey Speculative Decoding Matrix Evaluator and EAGLE Draft Head Trainer for Local LLMs</strong>
+</p>
 
-[![Python Version](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue.svg)](https://python.org)
-[![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B-ee4c2c.svg)](https://pytorch.org)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.100%2B-009688.svg)](https://fastapi.tiangolo.com)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-62%20passed-brightgreen.svg)]()
-[![CI](https://github.com/alexandrmotologa/draftcraft/actions/workflows/ci.yml/badge.svg)](https://github.com/alexandrmotologa/draftcraft/actions)
+<p align="center">
+  <a href="https://python.org"><img src="https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue.svg" alt="Python Version" /></a>
+  <a href="https://pytorch.org"><img src="https://img.shields.io/badge/PyTorch-2.0%2B-ee4c2c.svg" alt="PyTorch" /></a>
+  <a href="https://fastapi.tiangolo.com"><img src="https://img.shields.io/badge/FastAPI-0.100%2B-009688.svg" alt="FastAPI" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License: MIT" /></a>
+  <img src="https://img.shields.io/badge/tests-62%20passed-brightgreen.svg" alt="Tests" />
+  <a href="https://github.com/alexandrmotologa/draftcraft/actions"><img src="https://github.com/alexandrmotologa/draftcraft/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
+</p>
 
 <br />
-
-<img src="docs/images/draftcraft_demo.gif" alt="DraftCraft Studio Demo" width="900" />
-
-</div>
 
 ## Overview
 
@@ -33,6 +35,61 @@ The realized acceleration depends on the token acceptance rate $\alpha$, the lat
 - **Distillation Training Pipeline**: Trains draft heads using a joint loss combining hidden state regression (MSE) and next-token prediction (Cross-Entropy) with AdamW and Cosine Annealing.
 - **Production Runtime Exporter**: Exports evaluation matrices and configurations to Markdown, CSV, JSON, and direct vLLM / SGLang speculative decoding formats.
 - **Web Dashboard with Interactive Canvas Charts**: Features interactive multi-line speedup curves, stacked VRAM memory bars, positional acceptance decay histograms, and real-time training loss graphs.
+
+---
+
+## Visual Interface & Live Studio Showcase
+
+DraftCraft includes a dark-theme Web Studio powered by FastAPI, featuring interactive HTML5 Canvas graphics for performance visualization, memory allocation breakdown, and live training telemetry.
+
+<div align="center">
+  <img src="docs/images/draftcraft_demo.gif" alt="DraftCraft Studio Animated Walkthrough" width="950" />
+  <p><em>Animated demonstration looping through the Speculative Matrix, VRAM Budget Analyzer, Temperature Profiler, Tokenizer Verifier, Empirical Profiler, and EAGLE Trainer modules.</em></p>
+</div>
+
+<br />
+
+### 1. Speculative Decoding Matrix Evaluator
+Interactive speedup trajectory curves comparing greedy chain speculation ($W=1$) against tree speculation ($W=2$, $W=4$) across lookahead depths $K \in [1, 8]$, identifying Pareto optimal operating points.
+
+<p align="center">
+  <img src="docs/images/draftcraft_matrix.png" alt="DraftCraft Speculative Matrix" width="950" />
+</p>
+
+### 2. GPU VRAM & KV Cache Budget Analyzer
+Component memory footprint breakdown illustrating target weights, EAGLE draft head, baseline KV cache, and speculative verification buffer against physical GPU VRAM limits.
+
+<p align="center">
+  <img src="docs/images/draftcraft_vram.png" alt="DraftCraft VRAM Budget Analyzer" width="950" />
+</p>
+
+### 3. Temperature Sensitivity Profiler
+Acceptance rate degradation curve $\alpha(T)$ spanning greedy generation ($T=0.0$) through high-entropy sampling ($T=1.0$), with break-even speedup threshold monitoring.
+
+<p align="center">
+  <img src="docs/images/draftcraft_temp.png" alt="DraftCraft Temperature Profiler" width="950" />
+</p>
+
+### 4. Tokenizer Vocabulary Alignment Verifier
+Cross-validation of target and draft vocabularies, identifying exact token ID overlaps, token collisions, and special token consistency.
+
+<p align="center">
+  <img src="docs/images/draftcraft_tokenizer.png" alt="DraftCraft Tokenizer Verifier" width="950" />
+</p>
+
+### 5. Empirical Positional Acceptance Profiler
+Per-position acceptance rate decay across lookahead slots, empirical throughput in tokens per second, and wall-clock speedup metrics.
+
+<p align="center">
+  <img src="docs/images/draftcraft_profiler.png" alt="DraftCraft Empirical Profiler" width="950" />
+</p>
+
+### 6. Local EAGLE Draft Head Trainer & Loss Telemetry
+PyTorch training pipeline telemetry displaying real-time joint distillation loss (MSE + Cross-Entropy) and checkpoint export paths.
+
+<p align="center">
+  <img src="docs/images/draftcraft_trainer.png" alt="DraftCraft EAGLE Trainer" width="950" />
+</p>
 
 ---
 
