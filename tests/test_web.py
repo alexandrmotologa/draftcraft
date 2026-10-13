@@ -11,7 +11,9 @@ def test_dashboard_index_html():
     response = client.get("/")
     assert response.status_code == 200
     assert "DraftCraft" in response.text
-    assert "EAGLE & Speculative Engine" in response.text
+    assert "EAGLE Speculative Suite" in response.text
+    assert "matrixCanvas" in response.text
+    assert "vramCanvas" in response.text
 
 
 def test_api_health():
@@ -28,6 +30,66 @@ def test_api_info():
     data = response.json()
     assert "pytorch_version" in data
     assert "cuda_available" in data
+
+
+def test_api_presets():
+    response = client.get("/api/presets")
+    assert response.status_code == 200
+    data = response.json()
+    assert "rtx-4090" in data
+    assert data["rtx-4090"]["vram_gb"] == 24.0
+
+
+def test_api_vram_calc():
+    payload = {
+        "target_param_count_billions": 8.0,
+        "target_precision": "q4_k_m",
+        "context_len": 4096,
+        "gpu_capacity_gb": 16.0,
+    }
+    response = client.post("/api/vram-calc", json=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["fits_in_gpu"] is True
+    assert data["headroom_gb"] > 0
+
+
+def test_api_temperature_profile():
+    payload = {
+        "alpha": 0.85,
+        "lookahead_depth": 3,
+        "draft_latency_ms": 3.0,
+        "target_latency_ms": 25.0,
+    }
+    response = client.post("/api/temperature-profile", json=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data["points"]) > 0
+    assert data["peak_speedup"] > 1.5
+
+
+def test_api_export_report_markdown():
+    payload = {
+        "format": "markdown",
+        "domain": "general",
+        "alpha": 0.78,
+    }
+    response = client.post("/api/export-report", json=payload)
+    assert response.status_code == 200
+    assert "# DraftCraft Speculative Decoding Evaluation Report" in response.text
+
+
+def test_api_export_report_vllm():
+    payload = {
+        "format": "vllm",
+        "domain": "code",
+        "alpha": 0.82,
+    }
+    response = client.post("/api/export-report", json=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["engine"] == "vllm"
+    assert "num_speculative_tokens" in data
 
 
 def test_api_verify_tokenizer():
