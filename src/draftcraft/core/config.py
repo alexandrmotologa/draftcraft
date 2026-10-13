@@ -87,9 +87,6 @@ class ProfilerConfig(BaseModel):
             raise ConfigurationError(
                 f"min_lookahead ({self.min_lookahead}) cannot exceed max_lookahead ({self.max_lookahead})"
             )
-        if self.draft_latency_ms >= self.target_latency_ms:
-            # Latency ratio must be favorable for speculative speedup
-            pass
         return self
 
 
